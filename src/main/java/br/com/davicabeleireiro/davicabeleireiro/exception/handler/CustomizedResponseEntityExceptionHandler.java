@@ -1,5 +1,6 @@
 package br.com.davicabeleireiro.davicabeleireiro.exception.handler;
 
+import br.com.davicabeleireiro.davicabeleireiro.exception.EmailAlreadyExists;
 import br.com.davicabeleireiro.davicabeleireiro.exception.ExceptionResponse;
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.Date;
 @RestController
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    //@ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handleAllExceptions (Exception ex, WebRequest request){
         ExceptionResponse response = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -31,5 +32,16 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         );
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmailAlreadyExists.class)
+    public final ResponseEntity<ExceptionResponse> emailAlreadyExists(Exception ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.IM_USED);
     }
 }
