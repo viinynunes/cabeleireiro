@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -31,13 +30,17 @@ public class ClientService {
     }
 
     public ClientDTO update(ClientDTO dto){
-        var entity = repository.findById(dto.getId()).get();
+        Client entity = repository.findById(dto.getId()).get();
 
-        entity.setFullName(dto.getFullName());
-        entity.setPhone(dto.getPhone());
-        entity.setPassword(encoder.encode(dto.getPassword()));
-
-        return new ClientDTO(repository.save(entity));
+        if (repository.verifyEmailAlreadyExists(dto.getEmail()) != null){
+            if(repository.verifyEmailWithIDAlreadyExists(dto.getId(), dto.getEmail()) != null){
+                return new ClientDTO(repository.save(saveEntity(entity, dto)));
+            } else {
+                throw new EmailAlreadyExists("The email " + dto.getEmail() + " is already used");
+            }
+        } else {
+            return new ClientDTO(repository.save(saveEntity(entity, dto)));
+        }
     }
 
     public List<ClientDTO> findAll(){
@@ -51,5 +54,14 @@ public class ClientService {
          if (repository.verifyEmailAlreadyExists(email.toLowerCase()) != null){
              throw new EmailAlreadyExists("The email " + email + " is already used");
          }
+    }
+
+    private Client saveEntity(Client entity, ClientDTO dto){
+        entity.setFullName(dto.getFullName());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setPassword(encoder.encode(dto.getPassword()));
+
+        return entity;
     }
 }
