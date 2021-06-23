@@ -20,6 +20,7 @@ public class AddressService {
 
     public AddressDTO create(AddressDTO dto){
         Address address = api.getAddressFromCEP(dto.getCep());
+
         return new AddressDTO(repository.save(address));
     }
 
