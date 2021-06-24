@@ -19,6 +19,12 @@ public class AddressController {
         return service.create(dto);
     }
 
+    @PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public AddressDTO update(@PathVariable("id") Long id, @RequestBody AddressDTO dto){
+        dto.setId(id);
+        return service.update(dto);
+    }
+
     @GetMapping(produces = "application/json", consumes = "application/json")
     public List<AddressDTO> findAll(){
         return service.findAll();

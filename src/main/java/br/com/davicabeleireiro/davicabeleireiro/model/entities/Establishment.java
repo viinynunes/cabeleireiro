@@ -18,7 +18,7 @@ public class Establishment implements Serializable {
     private String name;
     private String description;
     @Column(nullable = false)
-    private String responsable;
+    private String responsible;
     @Column(nullable = false)
     private String email;
     private Boolean enabled;
@@ -47,17 +47,17 @@ public class Establishment implements Serializable {
         id = dto.getId();
         name = dto.getName();
         description = dto.getDescription();
-        responsable = dto.getResponsable();
+        responsible = dto.getResponsable();
         email = dto.getEmail();
         enabled = dto.getEnabled();
         address = dto.getAddress();
     }
 
-    public Establishment(Long id, String name, String description, String responsable, String email, Boolean enabled, Address address) {
+    public Establishment(Long id, String name, String description, String responsible, String email, Boolean enabled, Address address) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.responsable = responsable;
+        this.responsible = responsible;
         this.email = email;
         this.enabled = enabled;
         this.address = address;
@@ -87,12 +87,12 @@ public class Establishment implements Serializable {
         this.description = description;
     }
 
-    public String getResponsable() {
-        return responsable;
+    public String getResponsible() {
+        return responsible;
     }
 
-    public void setResponsable(String responsable) {
-        this.responsable = responsable;
+    public void setResponsible(String responsible) {
+        this.responsible = responsible;
     }
 
     public String getEmail() {

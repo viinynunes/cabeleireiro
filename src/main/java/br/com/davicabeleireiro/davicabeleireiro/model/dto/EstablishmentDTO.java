@@ -31,7 +31,7 @@ public class EstablishmentDTO {
         id = establishment.getId();
         name = establishment.getName();
         description = establishment.getDescription();
-        responsable = establishment.getResponsable();
+        responsable = establishment.getResponsible();
         email = establishment.getEmail();
         enabled = establishment.getEnabled();
         address = establishment.getAddress();

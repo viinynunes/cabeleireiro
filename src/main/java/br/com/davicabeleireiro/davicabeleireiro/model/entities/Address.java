@@ -16,6 +16,7 @@ public class Address implements Serializable {
     @Column(length = 9)
     private String cep;
     private String logradouro;
+    private String numero;
     private String complemento;
     private String bairro;
     private String localidade;
@@ -29,10 +30,11 @@ public class Address implements Serializable {
 
     }
 
-    public Address(Long id, String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi) {
+    public Address(Long id, String cep, String logradouro, String numero, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi) {
         this.id = id;
         this.cep = cep;
         this.logradouro = logradouro;
+        this.numero = numero;
         this.complemento = complemento;
         this.bairro = bairro;
         this.localidade = localidade;
@@ -47,6 +49,7 @@ public class Address implements Serializable {
         id = dto.getId();
         cep = dto.getCep();
         logradouro = dto.getLogradouro();
+        numero = dto.getNumero();
         complemento = dto.getComplemento();
         bairro = dto.getBairro();
         localidade = dto.getLocalidade();
@@ -79,6 +82,14 @@ public class Address implements Serializable {
 
     public void setLogradouro(String logradouro) {
         this.logradouro = logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public String getComplemento() {

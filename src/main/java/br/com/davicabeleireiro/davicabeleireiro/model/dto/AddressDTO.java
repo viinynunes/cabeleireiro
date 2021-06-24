@@ -10,6 +10,7 @@ public class AddressDTO {
     private Long id;
     private String cep;
     private String logradouro;
+    private String numero;
     private String complemento;
     private String bairro;
     private String localidade;
@@ -22,11 +23,11 @@ public class AddressDTO {
     public AddressDTO() {
     }
 
-    public AddressDTO(Long id, String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi) {
+    public AddressDTO(Long id, String cep, String logradouro, String numero, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi) {
         this.id = id;
         this.cep = cep;
         this.logradouro = logradouro;
-        this.logradouro = logradouro;
+        this.numero = numero;
         this.complemento = complemento;
         this.bairro = bairro;
         this.localidade = localidade;
@@ -41,6 +42,7 @@ public class AddressDTO {
         id = entity.getId();
         cep = entity.getCep();
         logradouro = entity.getLogradouro();
+        numero = entity.getNumero();
         complemento = entity.getComplemento();
         bairro = entity.getBairro();
         localidade = entity.getLocalidade();
@@ -73,6 +75,14 @@ public class AddressDTO {
 
     public void setLogradouro(String logradouro) {
         this.logradouro = logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public String getComplemento() {

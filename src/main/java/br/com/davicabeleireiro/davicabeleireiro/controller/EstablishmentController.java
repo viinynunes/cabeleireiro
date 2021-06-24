@@ -16,8 +16,6 @@ public class EstablishmentController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public EstablishmentDTO create(@RequestBody EstablishmentDTO dto){
-
-
         return service.create(dto);
     }
 
