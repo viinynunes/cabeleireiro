@@ -35,4 +35,9 @@ public class ClientController {
     public List<ClientDTO> findByName(@PathVariable("name") String name){
         return service.findByName(name);
     }
+
+    @GetMapping(value = "/findByEveryAttribute/{param}", consumes = "application/json")
+    public List<ClientDTO> findByEveryAttribute(@PathVariable("param") String param){
+        return service.findByEveryAttribute(param);
+    }
 }

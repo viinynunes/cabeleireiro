@@ -58,6 +58,14 @@ public class ClientService {
         return dtoList;
     }
 
+    public List<ClientDTO> findByEveryAttribute(String param){
+        var entityList = repository.findByEveryAttribute(param);
+
+        List<ClientDTO> dtoList = new ArrayList<>();
+        entityList.forEach(x -> dtoList.add(new ClientDTO(x)));
+        return dtoList;
+    }
+
     private void verifyEmailExists(String email){
          if (repository.verifyEmailAlreadyExists(email.toLowerCase()) != null){
              throw new EmailAlreadyExists("The email " + email + " is already used");

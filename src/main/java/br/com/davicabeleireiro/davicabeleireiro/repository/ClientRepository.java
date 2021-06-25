@@ -20,4 +20,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE LOWER(c.fullName) LIKE %:fullName%")
     List<Client> findByFullName(@Param("fullName") String fullName);
+
+    @Query("SELECT c FROM Client c WHERE LOWER(c.fullName) LIKE %:param% OR LOWER(c.email) LIKE %:param% OR c.phone LIKE %:param%")
+    List<Client> findByEveryAttribute(@Param("param") String param);
 }
