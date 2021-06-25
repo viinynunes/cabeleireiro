@@ -30,4 +30,9 @@ public class ClientController {
     public List<ClientDTO> findAll(){
         return service.findAll();
     }
+
+    @GetMapping(value = "/findByName/{name}", consumes = "application/json")
+    public List<ClientDTO> findByName(@PathVariable("name") String name){
+        return service.findByName(name);
+    }
 }

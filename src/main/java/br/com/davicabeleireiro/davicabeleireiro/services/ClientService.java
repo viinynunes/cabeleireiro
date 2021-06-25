@@ -1,6 +1,7 @@
 package br.com.davicabeleireiro.davicabeleireiro.services;
 
 import br.com.davicabeleireiro.davicabeleireiro.exception.EmailAlreadyExists;
+import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ClientDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Client;
 import br.com.davicabeleireiro.davicabeleireiro.repository.ClientRepository;
@@ -30,7 +31,7 @@ public class ClientService {
     }
 
     public ClientDTO update(ClientDTO dto){
-        Client entity = repository.findById(dto.getId()).get();
+        Client entity = repository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException("ID " + dto.getId()+ " not found"));
 
         if (repository.verifyEmailAlreadyExists(dto.getEmail()) != null){
             if(repository.verifyEmailWithIDAlreadyExists(dto.getId(), dto.getEmail()) != null){
@@ -45,6 +46,13 @@ public class ClientService {
 
     public List<ClientDTO> findAll(){
         var entityList = repository.findAll();
+        List<ClientDTO> dtoList = new ArrayList<>();
+        entityList.forEach(x -> dtoList.add(new ClientDTO(x)));
+        return dtoList;
+    }
+
+    public List<ClientDTO> findByName(String name){
+        var entityList = repository.findByFullName(name);
         List<ClientDTO> dtoList = new ArrayList<>();
         entityList.forEach(x -> dtoList.add(new ClientDTO(x)));
         return dtoList;

@@ -13,7 +13,7 @@ public class EstablishmentDTO {
     private Long id;
     private String name;
     private String description;
-    private String responsable;
+    private String responsible;
     private String email;
     private Boolean enabled;
 
@@ -31,17 +31,17 @@ public class EstablishmentDTO {
         id = establishment.getId();
         name = establishment.getName();
         description = establishment.getDescription();
-        responsable = establishment.getResponsible();
+        responsible = establishment.getResponsible();
         email = establishment.getEmail();
         enabled = establishment.getEnabled();
         address = establishment.getAddress();
     }
 
-    public EstablishmentDTO(Long id, String name, String description, String responsable, String email, Boolean enabled, Address address) {
+    public EstablishmentDTO(Long id, String name, String description, String responsible, String email, Boolean enabled, Address address) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.responsable = responsable;
+        this.responsible = responsible;
         this.email = email;
         this.enabled = enabled;
         this.address = address;
@@ -71,12 +71,12 @@ public class EstablishmentDTO {
         this.description = description;
     }
 
-    public String getResponsable() {
-        return responsable;
+    public String getResponsible() {
+        return responsible;
     }
 
-    public void setResponsable(String responsable) {
-        this.responsable = responsable;
+    public void setResponsible(String responsible) {
+        this.responsible = responsible;
     }
 
     public String getEmail() {

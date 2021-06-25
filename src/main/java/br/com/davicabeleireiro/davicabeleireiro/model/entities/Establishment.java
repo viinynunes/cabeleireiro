@@ -47,7 +47,7 @@ public class Establishment implements Serializable {
         id = dto.getId();
         name = dto.getName();
         description = dto.getDescription();
-        responsible = dto.getResponsable();
+        responsible = dto.getResponsible();
         email = dto.getEmail();
         enabled = dto.getEnabled();
         address = dto.getAddress();
