@@ -1,9 +1,12 @@
 package br.com.davicabeleireiro.davicabeleireiro.config;
 
+import br.com.davicabeleireiro.davicabeleireiro.security.jwt.JWTConfigurer;
+import br.com.davicabeleireiro.davicabeleireiro.security.jwt.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,9 +20,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private JWTTokenProvider tokenProvider;
+
     @Bean
-    public BCryptPasswordEncoder encoder(){
+    public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Override
@@ -33,6 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().anyRequest().permitAll();
+                .authorizeRequests()
+                .anyRequest().permitAll()
+                .and()
+                .apply(new JWTConfigurer(tokenProvider));
     }
 }

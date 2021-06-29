@@ -1,6 +1,6 @@
 package br.com.davicabeleireiro.davicabeleireiro.services;
 
-import br.com.davicabeleireiro.davicabeleireiro.exception.EmailAlreadyExists;
+import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceAlreadyExists;
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ClientDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Client;
@@ -37,7 +37,7 @@ public class ClientService {
             if(repository.verifyEmailWithIDAlreadyExists(dto.getId(), dto.getEmail()) != null){
                 return new ClientDTO(repository.save(saveEntity(entity, dto)));
             } else {
-                throw new EmailAlreadyExists("The email " + dto.getEmail() + " is already used");
+                throw new ResourceAlreadyExists("The email " + dto.getEmail() + " is already used");
             }
         } else {
             return new ClientDTO(repository.save(saveEntity(entity, dto)));
@@ -68,7 +68,7 @@ public class ClientService {
 
     private void verifyEmailExists(String email){
          if (repository.verifyEmailAlreadyExists(email.toLowerCase()) != null){
-             throw new EmailAlreadyExists("The email " + email + " is already used");
+             throw new ResourceAlreadyExists("The email " + email + " is already used");
          }
     }
 
