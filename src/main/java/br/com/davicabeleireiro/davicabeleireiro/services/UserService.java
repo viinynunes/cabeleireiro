@@ -78,13 +78,14 @@ public class UserService implements UserDetailsService {
 
         entity.setPermissions(getPermissionList(dto));
 
-        if (userRepository.findByUserName(dto.getUserName()) == null && userRepository.verifyUsernameWithIdAlreadyExists(dto.getUserName(), dto.getId()) == null) {
-
-            throw new ResourceAlreadyExists("Username " + dto.getUserName() + " already exists");
+        if (userRepository.findByUserName(dto.getUserName()) != null){
+            if (userRepository.verifyUsernameWithIdAlreadyExists(dto.getUserName(), dto.getId()) == null){
+                throw new ResourceAlreadyExists("The username " + dto.getUserName() + " is already used");
+            }
         }
 
         if (userRepository.verifyEmailAlreadyExists(dto.getEmail()) != null){
-            if (userRepository.verifyEmailWithIDAlreadyExists(dto.getFullName(), dto.getId()) != null){
+            if (userRepository.verifyEmailWithIDAlreadyExists(dto.getEmail(), dto.getId()) != null){
                 return new UserDTO(userRepository.save(entity));
             }else {
                 throw new ResourceAlreadyExists("The email " + dto.getEmail() + " is already used");
