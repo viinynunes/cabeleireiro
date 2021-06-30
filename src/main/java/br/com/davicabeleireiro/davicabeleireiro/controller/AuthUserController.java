@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/signin")
+@RequestMapping("/signing")
 public class AuthUserController {
 
     @Autowired
