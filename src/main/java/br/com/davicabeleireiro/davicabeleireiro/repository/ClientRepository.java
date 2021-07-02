@@ -11,6 +11,11 @@ import java.util.List;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
+    Client findByEmail(String email);
+
+    @Query("SELECT c.phone FROM Client c WHERE c.phone = :phone")
+    String verifyPhoneAlreadyExists(@Param("phone") String phone);
+
     @Query("SELECT c.email FROM Client c WHERE LOWER(c.email) = :email")
     String verifyEmailAlreadyExists(@Param("email") String email);
 
@@ -23,4 +28,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE LOWER(c.fullName) LIKE %:param% OR LOWER(c.email) LIKE %:param% OR c.phone LIKE %:param%")
     List<Client> findByEveryAttribute(@Param("param") String param);
+
+
 }

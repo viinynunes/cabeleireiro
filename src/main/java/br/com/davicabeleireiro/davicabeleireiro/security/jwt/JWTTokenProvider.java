@@ -1,6 +1,7 @@
 package br.com.davicabeleireiro.davicabeleireiro.security.jwt;
 
 import br.com.davicabeleireiro.davicabeleireiro.exception.InvalidJwtAuthenticationException;
+import br.com.davicabeleireiro.davicabeleireiro.services.ClientService;
 import br.com.davicabeleireiro.davicabeleireiro.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,6 +27,9 @@ public class JWTTokenProvider {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ClientService clientService;
+
     @PostConstruct
     public void init(){
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
@@ -46,7 +50,12 @@ public class JWTTokenProvider {
                 .compact();
     }
 
-    public Authentication getAuthentication(String token){
+    public Authentication getAuthenticationFromClient(String token){
+        UserDetails userDetails = clientService.loadUserByUsername(getUsernameFromToken(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    public Authentication getAuthenticationFromUser(String token){
         UserDetails userDetails = userService.loadUserByUsername(getUsernameFromToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getAuthorities(), userDetails.getAuthorities());
     }
@@ -73,5 +82,11 @@ public class JWTTokenProvider {
         } catch (Exception e){
             throw new InvalidJwtAuthenticationException("Token invalid or Expired");
         }
+    }
+
+    public Boolean isClient(String token){
+        var subject = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+
+        return subject.equalsIgnoreCase("client");
     }
 }

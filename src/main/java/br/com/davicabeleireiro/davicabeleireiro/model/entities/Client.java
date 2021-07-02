@@ -1,26 +1,44 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.entities;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ClientDTO;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "client")
-public class Client implements Serializable {
+public class Client implements Serializable, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 80)
     private String fullName;
-    @Column(length = 15)
+    @Column(length = 15, unique = true)
     private String phone;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(length = 80, nullable = false)
     private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "client_permission", joinColumns = @JoinColumn(name = "id_client"),
+        inverseJoinColumns = @JoinColumn(name = "id_permission"))
+    private List<Permission> permissions = new ArrayList<>();
+
+    public List<String> getRoles(){
+        List<String> roles = new ArrayList<>();
+        for (Permission p : permissions){
+            roles.add(p.getDescription());
+        }
+        return roles;
+    }
 
     public Client(){
 
@@ -80,6 +98,44 @@ public class Client implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.phone;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override

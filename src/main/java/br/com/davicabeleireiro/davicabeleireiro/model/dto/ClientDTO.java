@@ -2,12 +2,17 @@ package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ClientDTO {
     private Long id;
     private String fullName;
     private String phone;
     private String email;
     private String password;
+
+    private List<String> roles = new ArrayList<>();
 
     public ClientDTO(){
 
@@ -27,6 +32,8 @@ public class ClientDTO {
         phone = client.getPhone();
         email = client.getEmail();
         password = client.getPassword();
+
+        roles = client.getRoles();
     }
 
     public Long getId() {
@@ -69,4 +76,11 @@ public class ClientDTO {
         this.password = password;
     }
 
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 }

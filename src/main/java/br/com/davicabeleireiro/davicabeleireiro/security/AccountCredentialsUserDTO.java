@@ -3,7 +3,7 @@ package br.com.davicabeleireiro.davicabeleireiro.security;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class AccountCredentialsDTO implements Serializable {
+public class AccountCredentialsUserDTO implements Serializable {
 
     private String username;
     private String password;
@@ -28,7 +28,7 @@ public class AccountCredentialsDTO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccountCredentialsDTO that = (AccountCredentialsDTO) o;
+        AccountCredentialsUserDTO that = (AccountCredentialsUserDTO) o;
         return Objects.equals(username, that.username) && Objects.equals(password, that.password);
     }
 

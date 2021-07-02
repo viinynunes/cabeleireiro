@@ -1,8 +1,10 @@
 package br.com.davicabeleireiro.davicabeleireiro.controller;
 
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
+import br.com.davicabeleireiro.davicabeleireiro.model.entities.Client;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.User;
-import br.com.davicabeleireiro.davicabeleireiro.repository.UserRepository;
+import br.com.davicabeleireiro.davicabeleireiro.repository.ClientRepository;
+import br.com.davicabeleireiro.davicabeleireiro.security.AccountCredentialsClientDTO;
 import br.com.davicabeleireiro.davicabeleireiro.security.AccountCredentialsUserDTO;
 import br.com.davicabeleireiro.davicabeleireiro.security.jwt.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,11 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/signing")
-public class AuthUserController {
+@RequestMapping("/signing/client")
+public class AuthClientController {
 
     @Autowired
-    private UserRepository userRepository;
+    private ClientRepository clientRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -32,25 +34,25 @@ public class AuthUserController {
     private JWTTokenProvider tokenProvider;
 
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity signing(@RequestBody AccountCredentialsUserDTO dto){
+    public ResponseEntity signing(@RequestBody AccountCredentialsClientDTO dto){
 
         try {
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
 
-        User user = userRepository.findByUserName(dto.getUsername());
+        Client client = clientRepository.findByEmail(dto.getEmail());
 
         var token = "";
 
-        if (user != null){
-            token = tokenProvider.createToken(dto.getUsername(), user.getRoles());
+        if (client != null){
+            token = tokenProvider.createToken(dto.getEmail(), client.getRoles());
         }else {
-            throw new ResourceNotFoundException("username "+ dto.getUsername() + " not found");
+            throw new ResourceNotFoundException("username "+ dto.getEmail() + " not found");
         }
 
         Map<Object, Object> model = new HashMap<>();
 
-        model.put("username", dto.getUsername());
+        model.put("username", dto.getEmail());
         model.put("token", token);
 
         return ok(model);

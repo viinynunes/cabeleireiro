@@ -4,8 +4,13 @@ import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceAlreadyExists;
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ClientDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Client;
+import br.com.davicabeleireiro.davicabeleireiro.model.entities.Permission;
 import br.com.davicabeleireiro.davicabeleireiro.repository.ClientRepository;
+import br.com.davicabeleireiro.davicabeleireiro.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ClientService {
+public class ClientService implements UserDetailsService {
 
     @Autowired
     private ClientRepository repository;
@@ -21,13 +26,31 @@ public class ClientService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+    @Autowired
+    private PermissionRepository permissionRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        var entity = repository.findByEmail(email);
+
+        if (entity != null){
+            return entity;
+        }else {
+            throw new UsernameNotFoundException("email " + email +" not found");
+        }
+    }
+
     public ClientDTO create(ClientDTO dto){
 
         verifyEmailExists(dto.getEmail());
 
+        verifyPhoneExists(dto.getPhone());
+
         dto.setPassword(encoder.encode(dto.getPassword()));
 
-        return new ClientDTO(repository.save(new Client(dto)));
+        dto.setRoles(dto.getRoles());
+
+        return new ClientDTO(repository.save(saveEntity(new Client(), dto)));
     }
 
     public ClientDTO update(ClientDTO dto){
@@ -72,12 +95,28 @@ public class ClientService {
          }
     }
 
+    private void verifyPhoneExists(String phone){
+        if (repository.verifyPhoneAlreadyExists(phone) != null){
+            throw new ResourceAlreadyExists("The phone " + phone + " is already used");
+        }
+    }
+
     private Client saveEntity(Client entity, ClientDTO dto){
         entity.setFullName(dto.getFullName());
         entity.setEmail(dto.getEmail());
         entity.setPhone(dto.getPhone());
         entity.setPassword(encoder.encode(dto.getPassword()));
-
+        entity.setPermissions(getPermissions(dto.getRoles()));
         return entity;
+    }
+
+    private List<Permission> getPermissions(List<String> roles){
+        List<Permission> permissionList = new ArrayList<>();
+
+        for (String role : roles){
+            long id = Long.parseLong(role);
+            permissionList.add(permissionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role " + id + " not found")));
+        }
+        return permissionList;
     }
 }

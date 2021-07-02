@@ -48,14 +48,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/signing").permitAll()
-                .antMatchers("/user/**", "/permission/**").
-                hasAuthority("ADMIN")
+                .antMatchers("/user/**", "/permission/**").permitAll()
+                //hasAuthority("ADMIN")
 
-                .antMatchers("/address", "/category", "/contact", "/item")
-                .hasAnyAuthority("ADMIN", "CREATOR")
+                .antMatchers("/address", "/category", "/contact", "/item").permitAll()
+                //.hasAnyAuthority("ADMIN", "CREATOR")
 
-                .antMatchers("/client", "reservation").
-                hasAnyAuthority("ADMIN", "CLIENT", "CREATOR")
+                .antMatchers("/client", "reservation").permitAll()
+                //hasAnyAuthority("ADMIN", "CLIENT", "CREATOR")
 
                 .and()
                 .apply(new JWTConfigurer(tokenProvider));
