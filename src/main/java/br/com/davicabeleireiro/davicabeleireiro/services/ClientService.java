@@ -56,8 +56,14 @@ public class ClientService implements UserDetailsService {
     public ClientDTO update(ClientDTO dto){
         Client entity = repository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException("ID " + dto.getId()+ " not found"));
 
-        if (repository.verifyEmailAlreadyExists(dto.getEmail()) != null){
-            if(repository.verifyEmailWithIDAlreadyExists(dto.getId(), dto.getEmail()) != null){
+        if (repository.verifyPhoneAlreadyExists(dto.getPhone()) != null){
+            if (repository.verifyPhoneWithIDAlreadyExists(dto.getPhone(), dto.getId()) == null){
+                throw new ResourceAlreadyExists("Phone "+ dto.getPhone() + " is already used");
+            }
+        }
+
+        if (repository.verifyEmailAlreadyExists(dto.getEmail().toLowerCase()) != null){
+            if(repository.verifyEmailWithIDAlreadyExists(dto.getId(), dto.getEmail().toLowerCase()) != null){
                 return new ClientDTO(repository.save(saveEntity(entity, dto)));
             } else {
                 throw new ResourceAlreadyExists("The email " + dto.getEmail() + " is already used");
