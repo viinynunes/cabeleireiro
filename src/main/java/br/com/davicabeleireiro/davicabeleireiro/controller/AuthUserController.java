@@ -36,24 +36,24 @@ public class AuthUserController {
 
         try {
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
+            User user = userRepository.findByUserName(dto.getUsername());
 
-        User user = userRepository.findByUserName(dto.getUsername());
+            var token = "";
 
-        var token = "";
+            if (user != null){
+                token = tokenProvider.createToken(dto.getUsername(), user.getRoles());
+            }else {
+                throw new ResourceNotFoundException("username "+ dto.getUsername() + " not found");
+            }
 
-        if (user != null){
-            token = tokenProvider.createToken(dto.getUsername(), user.getRoles());
-        }else {
-            throw new ResourceNotFoundException("username "+ dto.getUsername() + " not found");
-        }
 
-        Map<Object, Object> model = new HashMap<>();
+            Map<Object, Object> model = new HashMap<>();
 
-        model.put("username", dto.getUsername());
-        model.put("token", token);
+            model.put("username", dto.getUsername());
+            model.put("token", token);
 
-        return ok(model);
+            return ok(model);
 
         } catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid username or password");

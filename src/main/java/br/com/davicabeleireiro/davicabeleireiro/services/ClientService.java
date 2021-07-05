@@ -8,6 +8,7 @@ import br.com.davicabeleireiro.davicabeleireiro.model.entities.Permission;
 import br.com.davicabeleireiro.davicabeleireiro.repository.ClientRepository;
 import br.com.davicabeleireiro.davicabeleireiro.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Qualifier("client")
 public class ClientService implements UserDetailsService {
 
     @Autowired

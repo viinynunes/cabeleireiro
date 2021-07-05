@@ -6,6 +6,7 @@ import br.com.davicabeleireiro.davicabeleireiro.exception.InvalidJwtAuthenticati
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ import java.util.Date;
 @RestController
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    //@ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handleAllExceptions (Exception ex, WebRequest request){
         ExceptionResponse response = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,6 +48,15 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(InvalidJwtAuthenticationException.class)
     public final ResponseEntity<ExceptionResponse> invalidJwtAuthenticationException(Exception ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(BadCredentialsException.class)
+    public final ResponseEntity<ExceptionResponse> badCredentialsException(Exception ex, WebRequest request){
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
                 ex.getMessage(),
