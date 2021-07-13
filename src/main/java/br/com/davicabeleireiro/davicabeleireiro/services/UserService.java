@@ -138,8 +138,12 @@ public class UserService implements UserDetailsService {
     private List<Permission> getPermissionList(UserDTO dto){
         List<Permission> permissionList = new ArrayList<>();
         for (String role : dto.getRoles()){
-            permissionList.add(permissionRepository.findById(Long.parseLong(role)).orElseThrow(() ->
-                    new ResourceNotFoundException("Permission " + role + " not found")));
+            var permission = permissionRepository.findByDescription(role);
+            if (permission != null){
+                permissionList.add(permission);
+            }else {
+                throw new ResourceNotFoundException("Permission " + role + " not found");
+            }
         }
 
         return permissionList;

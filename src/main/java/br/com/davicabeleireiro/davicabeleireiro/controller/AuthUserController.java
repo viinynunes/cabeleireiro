@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/signing")
+@RequestMapping("admin/signing")
 public class AuthUserController {
 
     @Autowired
@@ -34,10 +34,17 @@ public class AuthUserController {
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity signing(@RequestBody AccountCredentialsUserDTO dto){
 
+        String exceptionMessage = "Invalid Username or Password";
+
         try {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
             User user = userRepository.findByUserName(dto.getUsername());
+
+            for (String p : user.getRoles()){
+                if (p.equalsIgnoreCase("client") & user.getRoles().size() <= 1)
+                    throw new BadCredentialsException(exceptionMessage = "User not allowed");
+            }
 
             var token = "";
 
@@ -47,7 +54,6 @@ public class AuthUserController {
                 throw new ResourceNotFoundException("username "+ dto.getUsername() + " not found");
             }
 
-
             Map<Object, Object> model = new HashMap<>();
 
             model.put("username", dto.getUsername());
@@ -56,7 +62,7 @@ public class AuthUserController {
             return ok(model);
 
         } catch (AuthenticationException e){
-            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException(exceptionMessage);
         }
     }
 
