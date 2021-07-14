@@ -100,6 +100,14 @@ public class ReservationService {
         return dtoList;
     }
 
+    public List<ReservationDTO> findByUser(String username){
+        var entityList = reservationRepository.findByUser(username);
+
+        List<ReservationDTO> dtoList = new ArrayList<>();
+        entityList.forEach(x -> dtoList.add(new ReservationDTO(x)));
+        return dtoList;
+    }
+
     private List<Item> getItemList(ReservationDTO dto){
         List<Item> itemList = new ArrayList<>();
 
