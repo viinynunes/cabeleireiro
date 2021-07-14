@@ -138,7 +138,7 @@ public class UserService implements UserDetailsService {
     private List<Permission> getPermissionList(UserDTO dto){
         List<Permission> permissionList = new ArrayList<>();
         for (String role : dto.getRoles()){
-            var permission = permissionRepository.findByDescription(role);
+            var permission = permissionRepository.findByDescription(role.toUpperCase());
             if (permission != null){
                 permissionList.add(permission);
             }else {

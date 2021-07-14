@@ -63,8 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         if (Arrays.asList(environment.getActiveProfiles()).contains("test")){
             http.headers().frameOptions().disable();
+
+            
         }
-/*
+
         http.httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -74,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .apply(new JWTConfigurer(tokenProvider));
 
-*/
+/*
 
         http.httpBasic().disable()
                 .csrf().disable()
@@ -93,5 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .apply(new JWTConfigurer(tokenProvider));
+
+ */
     }
 }

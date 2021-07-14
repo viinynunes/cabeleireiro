@@ -10,8 +10,9 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query
     List<Reservation> findByEnabledTrue();
+
+    List<Reservation> findByEnabledFalse();
 
     @Modifying
     @Query("UPDATE Reservation r SET r.enabled = false WHERE r.id =:id")

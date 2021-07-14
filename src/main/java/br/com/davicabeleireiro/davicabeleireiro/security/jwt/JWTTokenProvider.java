@@ -1,7 +1,6 @@
 package br.com.davicabeleireiro.davicabeleireiro.security.jwt;
 
 import br.com.davicabeleireiro.davicabeleireiro.exception.InvalidJwtAuthenticationException;
-import br.com.davicabeleireiro.davicabeleireiro.services.ClientService;
 import br.com.davicabeleireiro.davicabeleireiro.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -27,9 +26,6 @@ public class JWTTokenProvider {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ClientService clientService;
-
     @PostConstruct
     public void init(){
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
@@ -48,11 +44,6 @@ public class JWTTokenProvider {
                 .setIssuedAt(now)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-    }
-
-    public Authentication getAuthenticationFromClient(String token){
-        UserDetails userDetails = clientService.loadUserByUsername(getUsernameFromToken(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public Authentication getAuthenticationFromUser(String token){

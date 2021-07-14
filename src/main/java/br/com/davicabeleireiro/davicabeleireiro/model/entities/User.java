@@ -1,6 +1,7 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.entities;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.UserDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

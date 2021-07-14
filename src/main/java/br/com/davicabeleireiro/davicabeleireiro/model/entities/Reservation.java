@@ -18,17 +18,16 @@ public class Reservation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String total;
-    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT-3")
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm", timezone = "GMT-3")
     private Date registrationTime;
     private Boolean enabled;
     private Date scheduleTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id")
-    private Client client;
+    @ManyToOne
+    private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "reservation_service", joinColumns = @JoinColumn(name = "reservation_id"),
         inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> itemList = new ArrayList<>();
@@ -37,13 +36,13 @@ public class Reservation implements Serializable {
 
     }
 
-    public Reservation(Long id, String total, Date registrationTime, Date scheduleTime, Boolean enabled, Client client) {
+    public Reservation(Long id, String total, Date registrationTime, Date scheduleTime, Boolean enabled, User user) {
         this.id = id;
         this.total = total;
         this.registrationTime = registrationTime;
         this.scheduleTime = scheduleTime;
         this.enabled = enabled;
-        this.client = client;
+        this.user = user;
     }
 
     public Reservation(ReservationDTO dto){
@@ -52,7 +51,7 @@ public class Reservation implements Serializable {
         registrationTime = dto.getRegistrationTime();
         scheduleTime = dto.getScheduleTime();
         enabled = dto.getEnabled();
-        client = dto.getClient();
+        user = dto.getUser();
 
         itemList = dto.getItemList();
 
@@ -90,12 +89,12 @@ public class Reservation implements Serializable {
         this.enabled = enabled;
     }
 
-    public Client getClient() {
-        return client;
+    public User getUser() {
+        return user;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<Item> getItemList() {

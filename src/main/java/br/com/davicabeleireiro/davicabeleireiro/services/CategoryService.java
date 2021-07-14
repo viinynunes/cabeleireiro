@@ -2,7 +2,6 @@ package br.com.davicabeleireiro.davicabeleireiro.services;
 
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.CategoryDTO;
-import br.com.davicabeleireiro.davicabeleireiro.model.dto.ClientDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Category;
 import br.com.davicabeleireiro.davicabeleireiro.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,28 +1,28 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 
-import br.com.davicabeleireiro.davicabeleireiro.model.entities.Client;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Item;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Reservation;
+import br.com.davicabeleireiro.davicabeleireiro.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ReservationDTO {
+public class ReservationDTO implements Serializable {
     private Long id;
     private String total;
-    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT-3")
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm", timezone = "GMT-3")
     private Date registrationTime;
-    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT-3")
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm", timezone = "GMT-3")
     private Date scheduleTime;
     private Boolean enabled;
 
-    private Client client;
+    private User user;
 
     private List<String> itemId = new ArrayList<>();
 
@@ -32,13 +32,13 @@ public class ReservationDTO {
 
     }
 
-    public ReservationDTO(Long id, String total, Date registrationTime, Date scheduleTime, Boolean enabled, Client client) {
+    public ReservationDTO(Long id, String total, Date registrationTime, Date scheduleTime, Boolean enabled, User user) {
         this.id = id;
         this.total = total;
         this.registrationTime = registrationTime;
         this.scheduleTime = scheduleTime;
         this.enabled = enabled;
-        this.client = client;
+        this.user = user;
     }
 
     public ReservationDTO(Reservation reservation){
@@ -47,7 +47,7 @@ public class ReservationDTO {
         registrationTime = reservation.getRegistrationTime();
         scheduleTime = reservation.getScheduleTime();
         enabled = reservation.getEnabled();
-        client = reservation.getClient();
+        user = reservation.getUser();
 
         itemList = reservation.getItemList();
     }
@@ -84,12 +84,12 @@ public class ReservationDTO {
         this.enabled = enabled;
     }
 
-    public Client getClient() {
-        return client;
+    public User getUser() {
+        return user;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<String> getItemId() {

@@ -28,14 +28,11 @@ public class JWTTokenFilter extends GenericFilterBean {
 
         Authentication auth;
 
-        if (token != null && tokenProvider.validateToken(token)){
+        if (token != null && tokenProvider.validateToken(token)) {
 
-            if (tokenProvider.isClient(token)){
-                auth = tokenProvider.getAuthenticationFromClient(token);
-            }else {
-                auth = tokenProvider.getAuthenticationFromUser(token);
-            }
-            if (auth != null){
+            auth = tokenProvider.getAuthenticationFromUser(token);
+
+            if (auth != null) {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }

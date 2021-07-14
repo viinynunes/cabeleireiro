@@ -4,15 +4,14 @@ import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundExcept
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ReservationDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Item;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Reservation;
-import br.com.davicabeleireiro.davicabeleireiro.repository.ClientRepository;
 import br.com.davicabeleireiro.davicabeleireiro.repository.ItemRepository;
 import br.com.davicabeleireiro.davicabeleireiro.repository.ReservationRepository;
+import br.com.davicabeleireiro.davicabeleireiro.repository.UserRepository;
 import br.com.davicabeleireiro.davicabeleireiro.utils.SumTotalValueReservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +27,7 @@ public class ReservationService {
     private ItemRepository itemRepository;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private UserRepository userRepository;
 
     private NumberFormat format = NumberFormat.getCurrencyInstance();
 
@@ -37,7 +36,7 @@ public class ReservationService {
         List<Item> itemList = getItemList(dto);
         itemList.forEach(x -> dto.addItemList(x));
 
-        dto.setClient(clientRepository.findById(dto.getClient().getId()).get());
+        dto.setUser(userRepository.findById(dto.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException("ID not found")));
 
         dto.setRegistrationTime(new Date());
         dto.setEnabled(true);
@@ -53,7 +52,7 @@ public class ReservationService {
         var itemList = getItemList(dto);
         entity.removeAllItemList();
         itemList.forEach(x -> entity.addItemList(x));
-        entity.setClient(dto.getClient());
+        entity.setUser(userRepository.findById(dto.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException("ID not found")));
         entity.setRegistrationTime(new Date());
         entity.setScheduleTime(dto.getScheduleTime());
 
@@ -61,6 +60,8 @@ public class ReservationService {
 
         entity.setTotal(String.format("2.f", t));
         entity.setEnabled(true);
+
+
 
         return new ReservationDTO(reservationRepository.save(entity));
     }
@@ -91,6 +92,14 @@ public class ReservationService {
         return dtoList;
     }
 
+    public List<ReservationDTO> findByEnabledFalse(){
+        var entityEnabledList = reservationRepository.findByEnabledFalse();
+
+        List<ReservationDTO> dtoList = new ArrayList<>();
+        entityEnabledList.forEach(x -> dtoList.add(new ReservationDTO(x)));
+        return dtoList;
+    }
+
     private List<Item> getItemList(ReservationDTO dto){
         List<Item> itemList = new ArrayList<>();
 
@@ -101,5 +110,4 @@ public class ReservationService {
 
         return itemList;
     }
-
 }

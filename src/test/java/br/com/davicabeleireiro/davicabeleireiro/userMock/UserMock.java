@@ -8,21 +8,21 @@ import java.util.List;
 
 public class UserMock {
 
-    public static User createUser(){
+    public static User getUser(){
         Permission permission = new Permission();
         permission.setId(2l);
         permission.setEnabled(true);
-        permission.setDescription("CLIENT");
+        permission.setDescription("ADMIN");
 
         List<Permission> permissionList = new ArrayList<>();
         permissionList.add(permission);
 
         User user = new User();
-        user.setId(2l);
-        user.setFullName("Davi Silva");
-        user.setUserName("daviP");
-        user.setEmail("davi_P@hotmail.com");
-        user.setPassword("davi123");
+        user.setId(1l);
+        user.setFullName("Vinicius Nunes");
+        user.setUserName("nunesV");
+        user.setEmail("nunes@hotmail.com");
+        user.setPassword("nunes123");
         user.setPermissions(permissionList);
 
         return user;
