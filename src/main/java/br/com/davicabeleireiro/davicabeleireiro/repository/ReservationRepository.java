@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -21,4 +22,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r INNER JOIN r.user u WHERE u.userName = :username")
     List<Reservation> findByUser(@Param("username") String username);
+
+    @Query("SELECT r.scheduleDate FROM Reservation r WHERE r.scheduleDate = :newDate AND r.enabled = true")
+    Date checkAvailableReservationDate(@Param("newDate") Date date);
+
+    @Query("SELECT r FROM Reservation r INNER JOIN r.user u on user_id=u.id WHERE u.id = :id " +
+            "AND r.scheduleDate = :newDate AND r.enabled = true")
+    Reservation checkAvailableReservationDateFromID(@Param("newDate")Date date, @Param("id") Long id);
+
+
+
 }

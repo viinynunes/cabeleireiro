@@ -1,5 +1,6 @@
 package br.com.davicabeleireiro.davicabeleireiro.services;
 
+import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceAlreadyExists;
 import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ReservationDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Item;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,16 +29,18 @@ public class ReservationService {
     @Autowired
     private UserRepository userRepository;
 
-    private NumberFormat format = NumberFormat.getCurrencyInstance();
-
     public ReservationDTO create(ReservationDTO dto){
 
+        if (reservationRepository.checkAvailableReservationDate(dto.getScheduleDate()) != null){
+            throw new ResourceAlreadyExists("The date "+ dto.getScheduleDate() + " is already used");
+        }
+
         List<Item> itemList = getItemList(dto);
-        itemList.forEach(x -> dto.addItemList(x));
+        itemList.forEach(dto::addItemList);
 
         dto.setUser(userRepository.findById(dto.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException("ID not found")));
 
-        dto.setRegistrationTime(new Date());
+        dto.setRegistrationDate(new Date());
         dto.setEnabled(true);
 
         dto.setTotal(String.format("%.2f", SumTotalValueReservation.sumTotal(dto.getItemList())));
@@ -47,14 +49,20 @@ public class ReservationService {
     }
 
     public ReservationDTO update(ReservationDTO dto){
+
+        if (reservationRepository.checkAvailableReservationDate(dto.getScheduleDate()) != null){
+            if (reservationRepository.checkAvailableReservationDateFromID(dto.getScheduleDate(), dto.getUser().getId()) == null){
+                throw new ResourceAlreadyExists("The date "+dto.getScheduleDate() + " is already used");
+            }
+        }
         var entity = reservationRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException("ID not found"));
 
         var itemList = getItemList(dto);
         entity.removeAllItemList();
-        itemList.forEach(x -> entity.addItemList(x));
+        itemList.forEach(entity::addItemList);
         entity.setUser(userRepository.findById(dto.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException("ID not found")));
-        entity.setRegistrationTime(new Date());
-        entity.setScheduleTime(dto.getScheduleTime());
+        entity.setRegistrationDate(new Date());
+        entity.setScheduleDate(dto.getScheduleDate());
 
         double t = SumTotalValueReservation.sumTotal(entity.getItemList());
 
@@ -113,9 +121,8 @@ public class ReservationService {
 
         for (String item: dto.getItemId()) {
             itemList.add(itemRepository.findById(Long.parseLong(item)).orElseThrow(() -> new ResourceNotFoundException("" +
-                    "No itens found for the ID: "+ item)));
-        };
-
+                    "No items found for the ID: "+ item)));
+        }
         return itemList;
     }
 }

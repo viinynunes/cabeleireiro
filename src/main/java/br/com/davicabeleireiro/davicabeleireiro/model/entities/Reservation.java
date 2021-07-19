@@ -20,9 +20,9 @@ public class Reservation implements Serializable {
     private String total;
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm", timezone = "GMT-3")
-    private Date registrationTime;
+    private Date registrationDate;
     private Boolean enabled;
-    private Date scheduleTime;
+    private Date scheduleDate;
 
     @ManyToOne
     private User user;
@@ -36,11 +36,11 @@ public class Reservation implements Serializable {
 
     }
 
-    public Reservation(Long id, String total, Date registrationTime, Date scheduleTime, Boolean enabled, User user) {
+    public Reservation(Long id, String total, Date registrationDate, Date scheduleDate, Boolean enabled, User user) {
         this.id = id;
         this.total = total;
-        this.registrationTime = registrationTime;
-        this.scheduleTime = scheduleTime;
+        this.registrationDate = registrationDate;
+        this.scheduleDate = scheduleDate;
         this.enabled = enabled;
         this.user = user;
     }
@@ -48,8 +48,8 @@ public class Reservation implements Serializable {
     public Reservation(ReservationDTO dto){
         id = dto.getId();
         total = dto.getTotal();
-        registrationTime = dto.getRegistrationTime();
-        scheduleTime = dto.getScheduleTime();
+        registrationDate = dto.getRegistrationDate();
+        scheduleDate = dto.getScheduleDate();
         enabled = dto.getEnabled();
         user = dto.getUser();
 
@@ -65,20 +65,20 @@ public class Reservation implements Serializable {
         this.id = id;
     }
 
-    public Date getRegistrationTime() {
-        return registrationTime;
+    public Date getRegistrationDate() {
+        return registrationDate;
     }
 
-    public void setRegistrationTime(Date registrationTime) {
-        this.registrationTime = registrationTime;
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
-    public Date getScheduleTime() {
-        return scheduleTime;
+    public Date getScheduleDate() {
+        return scheduleDate;
     }
 
-    public void setScheduleTime(Date scheduleTime) {
-        this.scheduleTime = scheduleTime;
+    public void setScheduleDate(Date scheduleDate) {
+        this.scheduleDate = scheduleDate;
     }
 
     public Boolean getEnabled() {
