@@ -23,6 +23,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT r FROM Reservation r INNER JOIN r.user u WHERE u.userName = :username")
     List<Reservation> findByUser(@Param("username") String username);
 
+    @Query("SELECT r FROM Reservation r INNER JOIN r.user u WHERE u.id = :id")
+    List<Reservation> findByUserID(@Param("id") Long id);
+
     @Query("SELECT r.scheduleDate FROM Reservation r WHERE r.scheduleDate = :newDate AND r.enabled = true")
     Date checkAvailableReservationDate(@Param("newDate") Date date);
 

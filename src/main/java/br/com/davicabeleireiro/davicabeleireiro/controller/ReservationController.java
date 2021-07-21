@@ -46,6 +46,11 @@ public class ReservationController {
         return service.findByUser(username);
     }
 
+    @GetMapping(value = "/findByUserId/{id}", consumes = "application/json")
+    public List<ReservationDTO> findByUser(@PathVariable("id") Long id){
+        return service.findByUserId(id);
+    }
+
     @PatchMapping(value = "/{id}", produces = "application/json")
     public ReservationDTO disableReservation(@PathVariable("id") Long id) {
         return service.disableReservation(id);
