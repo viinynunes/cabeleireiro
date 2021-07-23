@@ -5,6 +5,8 @@ import br.com.davicabeleireiro.davicabeleireiro.model.dto.CategoryDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Category;
 import br.com.davicabeleireiro.davicabeleireiro.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,35 +43,29 @@ public class CategoryService {
         return new CategoryDTO(entity);
     }
 
-    public List<CategoryDTO> findAll(){
-        var categoryList = repository.findAll();
-        List<CategoryDTO> dtoList = new ArrayList<>();
-        categoryList.forEach(x -> dtoList.add(new CategoryDTO(x)));
-        return dtoList;
+    public Page<CategoryDTO> findAll(Pageable pageable){
+        var categoryList = repository.findAll(pageable);
+        return categoryList.map(this::convertToVO);
     }
 
-    public List<CategoryDTO> findByName(String name){
-        var categoryList = repository.findByName(name);
-
-        List<CategoryDTO> dtoList = new ArrayList<>();
-        categoryList.forEach(x -> dtoList.add(new CategoryDTO(x)));
-        return dtoList;
+    private CategoryDTO convertToVO(Category category){
+        return new CategoryDTO(category);
     }
 
-    public List<CategoryDTO> findByEnabledTrue(){
-        var categoryList = repository.findByEnabledTrue();
-        List<CategoryDTO> dtoList = new ArrayList<>();
-        categoryList.forEach(x -> dtoList.add(new CategoryDTO(x)));
+    public Page<CategoryDTO> findByName(String name, Pageable pageable){
+        var categoryList = repository.findByName(name, pageable);
 
-        return dtoList;
+        return categoryList.map(this::convertToVO);
     }
 
-    public List<CategoryDTO> findByEnabledFalse(){
-        var categoryList = repository.findByEnabledFalse();
-        List<CategoryDTO> dtoList = new ArrayList<>();
-        categoryList.forEach(x -> dtoList.add(new CategoryDTO(x)));
+    public Page<CategoryDTO> findByEnabledTrue(Pageable pageable){
+        var categoryList = repository.findByEnabledTrue(pageable);
+        return categoryList.map(this::convertToVO);
+    }
 
-        return dtoList;
+    public Page<CategoryDTO> findByEnabledFalse(Pageable pageable){
+        var categoryList = repository.findByEnabledFalse(pageable);
+        return categoryList.map(this::convertToVO);
     }
 
 }
