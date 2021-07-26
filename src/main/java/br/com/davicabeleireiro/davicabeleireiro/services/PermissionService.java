@@ -6,6 +6,8 @@ import br.com.davicabeleireiro.davicabeleireiro.model.dto.PermissionDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Permission;
 import br.com.davicabeleireiro.davicabeleireiro.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,29 +59,26 @@ public class PermissionService {
         return new PermissionDTO(entity);
     }
 
-    public List<PermissionDTO> findAll(){
-        var entityList = permissionRepository.findAll();
+    public Page<PermissionDTO> findAll(Pageable pageable){
+        var entityList = permissionRepository.findAll(pageable);
 
-        List<PermissionDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new PermissionDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<PermissionDTO> findByEnabledTrue(){
-        var entityList = permissionRepository.findByEnabledTrue();
+    public Page<PermissionDTO> findByEnabledTrue(Pageable pageable){
+        var entityList = permissionRepository.findByEnabledTrue(pageable);
 
-        List<PermissionDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new PermissionDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<PermissionDTO> findByEnabledFalse(){
-        var entityList = permissionRepository.findByEnabledFalse();
+    public Page<PermissionDTO> findByEnabledFalse(Pageable pageable){
+        var entityList = permissionRepository.findByEnabledFalse(pageable);
 
-        List<PermissionDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new PermissionDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
+    private PermissionDTO convertToDTO(Permission permission){
+        return new PermissionDTO(permission);
+    }
 
 }
