@@ -10,6 +10,8 @@ import br.com.davicabeleireiro.davicabeleireiro.repository.ReservationRepository
 import br.com.davicabeleireiro.davicabeleireiro.repository.UserRepository;
 import br.com.davicabeleireiro.davicabeleireiro.utils.SumTotalValueReservation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,10 +68,8 @@ public class ReservationService {
 
         double t = SumTotalValueReservation.sumTotal(entity.getItemList());
 
-        entity.setTotal(String.format("2.f", t));
+        entity.setTotal(String.format("2.%f", t));
         entity.setEnabled(true);
-
-
 
         return new ReservationDTO(reservationRepository.save(entity));
     }
@@ -83,45 +83,34 @@ public class ReservationService {
         return new ReservationDTO(entity);
     }
 
-    public List<ReservationDTO> findAll(){
-        var entityList = reservationRepository.findAll();
-        List<ReservationDTO> dtoList = new ArrayList<>();
+    public Page<ReservationDTO> findAll(Pageable pageable){
+        var entityList = reservationRepository.findAll(pageable);
 
-        entityList.forEach(x -> dtoList.add(new ReservationDTO(x)));
-
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<ReservationDTO> findByEnabledTrue(){
-        var entityEnabledList = reservationRepository.findByEnabledTrue();
+    public Page<ReservationDTO> findByEnabledTrue(Pageable pageable){
+        var entityList = reservationRepository.findByEnabledTrue(pageable);
 
-        List<ReservationDTO> dtoList = new ArrayList<>();
-        entityEnabledList.forEach(x -> dtoList.add(new ReservationDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<ReservationDTO> findByEnabledFalse(){
-        var entityEnabledList = reservationRepository.findByEnabledFalse();
+    public Page<ReservationDTO> findByEnabledFalse(Pageable pageable){
+        var entityList = reservationRepository.findByEnabledFalse(pageable);
 
-        List<ReservationDTO> dtoList = new ArrayList<>();
-        entityEnabledList.forEach(x -> dtoList.add(new ReservationDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<ReservationDTO> findByUser(String username){
-        var entityList = reservationRepository.findByUser(username);
+    public Page<ReservationDTO> findByUser(String username, Pageable pageable){
+        var entityList = reservationRepository.findByUser(username, pageable);
 
-        List<ReservationDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new ReservationDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<ReservationDTO> findByUserId(Long id){
-        var entityList = reservationRepository.findByUserID(id);
+    public Page<ReservationDTO> findByUserId(Long id, Pageable pageable){
+        var entityList = reservationRepository.findByUserID(id, pageable);
 
-        List<ReservationDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new ReservationDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
     private List<Item> getItemList(ReservationDTO dto){
@@ -132,5 +121,9 @@ public class ReservationService {
                     "No items found for the ID: "+ item)));
         }
         return itemList;
+    }
+
+    private ReservationDTO convertToDTO(Reservation reservation){
+        return new ReservationDTO(reservation);
     }
 }
