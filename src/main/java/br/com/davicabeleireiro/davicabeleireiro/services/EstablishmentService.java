@@ -4,10 +4,9 @@ import br.com.davicabeleireiro.davicabeleireiro.model.dto.EstablishmentDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Establishment;
 import br.com.davicabeleireiro.davicabeleireiro.repository.EstablishmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class EstablishmentService {
@@ -23,10 +22,12 @@ public class EstablishmentService {
         return new EstablishmentDTO(repository.save(new Establishment(dto)));
     }
 
-    public List<EstablishmentDTO> findAll(){
-        List<Establishment> list = repository.findAll();
-        List<EstablishmentDTO> dtoList = new ArrayList<>();
-        list.forEach(x -> dtoList.add(new EstablishmentDTO(x)));
-        return dtoList;
+    public Page<EstablishmentDTO> findAll(Pageable pageable){
+        var entityList = repository.findAll(pageable);
+        return entityList.map(this::convertToDTO);
+    }
+
+    private EstablishmentDTO convertToDTO(Establishment establishment){
+        return new EstablishmentDTO(establishment);
     }
 }
