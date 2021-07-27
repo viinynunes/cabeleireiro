@@ -1,5 +1,8 @@
 package br.com.davicabeleireiro.davicabeleireiro.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.PermissionDTO;
 import br.com.davicabeleireiro.davicabeleireiro.services.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +27,32 @@ public class PermissionController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public PermissionDTO create(@RequestBody PermissionDTO dto){
-        return permissionService.create(dto);
+        var entity = permissionService.create(dto);
+        entity.add(linkTo(methodOn(PermissionController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
     public PermissionDTO update(@PathVariable("id") Long id,
                                 @RequestBody PermissionDTO dto){
         dto.setId(id);
-        return permissionService.update(dto);
+        var entity = permissionService.update(dto);
+        entity.add(linkTo(methodOn(PermissionController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PatchMapping(value = "/disable/{id}", consumes = "application/json")
     public PermissionDTO disable(@PathVariable("id") Long id){
-        return permissionService.disable(id);
+        var entity = permissionService.disable(id);
+        entity.add(linkTo(methodOn(PermissionController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(value = "/{id}", consumes = "application/json")
     public PermissionDTO findById(@PathVariable("id") Long id){
-        return permissionService.findById(id);
+        var entity = permissionService.findById(id);
+        entity.add(linkTo(methodOn(PermissionController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(consumes = "application/json")
@@ -52,9 +63,10 @@ public class PermissionController {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "description"));
 
-        var permissionPaged = permissionService.findAll(pageable);
+        var entityList = permissionService.findAll(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(PermissionController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(permissionPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
@@ -66,9 +78,10 @@ public class PermissionController {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "description"));
 
-        var permissionPaged = permissionService.findByEnabledTrue(pageable);
+        var entityList = permissionService.findByEnabledTrue(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(PermissionController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(permissionPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
@@ -79,9 +92,10 @@ public class PermissionController {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "description"));
 
-        var permissionPaged = permissionService.findByEnabledFalse(pageable);
+        var entityList = permissionService.findByEnabledFalse(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(PermissionController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(permissionPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 

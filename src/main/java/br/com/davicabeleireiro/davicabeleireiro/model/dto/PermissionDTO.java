@@ -1,10 +1,11 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Permission;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 
-public class PermissionDTO implements Serializable {
+public class PermissionDTO extends RepresentationModel<PermissionDTO> implements Serializable {
 
     private Long id;
     private String description;
@@ -16,7 +17,6 @@ public class PermissionDTO implements Serializable {
         this.id = id;
         this.description = description;
         this.enabled = enabled;
-
     }
 
     public PermissionDTO(Permission permission){
