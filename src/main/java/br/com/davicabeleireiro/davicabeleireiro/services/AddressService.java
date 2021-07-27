@@ -5,6 +5,8 @@ import br.com.davicabeleireiro.davicabeleireiro.model.dto.AddressDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Address;
 import br.com.davicabeleireiro.davicabeleireiro.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,12 +43,19 @@ public class AddressService {
         return new AddressDTO(repository.save(entity));
     }
 
-    public List<AddressDTO> findAll(){
-        var list = repository.findAll();
-        List<AddressDTO> listDTO = new ArrayList<>();
-        list.forEach(x -> listDTO.add(new AddressDTO(x)));
-        return listDTO;
+    public AddressDTO findById(Long id){
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+id+" not found"));
+        return convertToDTO(entity);
     }
 
+    public Page<AddressDTO> findAll(Pageable pageable){
+        var entityList = repository.findAll(pageable);
+
+        return entityList.map(this::convertToDTO);
+    }
+
+    public AddressDTO convertToDTO(Address address){
+        return new AddressDTO(address);
+    }
 
 }

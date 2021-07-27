@@ -1,11 +1,12 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Address;
+import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.Column;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class AddressDTO {
+public class AddressDTO extends RepresentationModel<AddressDTO> implements Serializable {
 
     private Long id;
     private String cep;
