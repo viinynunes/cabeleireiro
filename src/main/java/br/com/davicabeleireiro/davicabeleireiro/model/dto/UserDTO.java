@@ -1,12 +1,12 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.User;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-public class UserDTO implements Serializable {
+public class UserDTO extends RepresentationModel<UserDTO> implements Serializable {
 
     private Long id;
     private String fullName;
@@ -14,7 +14,7 @@ public class UserDTO implements Serializable {
     private String email;
     private String password;
 
-    private List<String> roles = new ArrayList<>();
+    private List<String> roles;
 
     public UserDTO(){}
 

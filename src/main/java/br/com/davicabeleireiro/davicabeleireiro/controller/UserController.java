@@ -1,5 +1,8 @@
 package br.com.davicabeleireiro.davicabeleireiro.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.UserDTO;
 import br.com.davicabeleireiro.davicabeleireiro.services.UserService;
 import br.com.davicabeleireiro.davicabeleireiro.utils.ControllerUtils;
@@ -25,24 +28,33 @@ public class UserController {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public UserDTO create(@RequestBody UserDTO dto) {
-        return userService.create(dto);
+        var entity = userService.create(dto);
+        entity.add(linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
     public UserDTO update(@PathVariable("id") Long id,
                           @RequestBody UserDTO dto) {
         dto.setId(id);
-        return userService.update(dto);
+        var entity = userService.update(dto);
+
+        entity.add(linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PatchMapping(value = "/disable/{id}", consumes = "application/json")
     public UserDTO disable(@PathVariable("id") Long id) {
-        return userService.disable(id);
+        var entity = userService.disable(id);
+        entity.add(linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(value = "/{id}", consumes = "application/json")
     public UserDTO findById(@PathVariable("id") Long id) {
-        return userService.findById(id);
+        var entity = userService.findById(id);
+        entity.add(linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(value = "/findByEnabledTrue", consumes = "application/json")
@@ -53,7 +65,7 @@ public class UserController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(ControllerUtils.getSortDirection(direction), "fullName"));
 
         var entityList = userService.findByEnabledTrue(pageable);
-
+        entityList.forEach(x -> x.add(linkTo(methodOn(UserController.class).findById(x.getId())).withSelfRel()));
         PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
@@ -65,6 +77,7 @@ public class UserController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(ControllerUtils.getSortDirection(direction), "fullName"));
 
         var entityList = userService.findByEnabledFalse(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(UserController.class).findById(x.getId())).withSelfRel()));
         PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
@@ -75,6 +88,8 @@ public class UserController {
                                      @RequestParam(value = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(ControllerUtils.getSortDirection(direction), "fullName"));
         var entityList = userService.findAll(pageable);
+
+        entityList.forEach(x -> x.add(linkTo(methodOn(UserController.class).findById(x.getId())).withSelfRel()));
 
         PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
