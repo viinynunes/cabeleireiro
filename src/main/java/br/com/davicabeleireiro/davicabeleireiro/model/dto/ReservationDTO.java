@@ -5,13 +5,14 @@ import br.com.davicabeleireiro.davicabeleireiro.model.entities.Reservation;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ReservationDTO implements Serializable {
+public class ReservationDTO extends RepresentationModel<ReservationDTO> implements Serializable {
     private Long id;
     private String total;
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")

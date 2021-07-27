@@ -35,6 +35,12 @@ public class ReservationController {
         return service.update(dto);
     }
 
+    @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public ReservationDTO findById(@PathVariable("id") Long id){
+        return service.findById(id);
+
+    }
+
     @GetMapping(consumes = "application/json")
     public ResponseEntity<?> findAll(@RequestParam(value = "direction", defaultValue = "desc") String direction,
                                         @RequestParam(value = "page", defaultValue = "0") int page,

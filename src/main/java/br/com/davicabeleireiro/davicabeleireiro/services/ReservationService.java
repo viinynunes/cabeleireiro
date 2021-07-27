@@ -83,6 +83,12 @@ public class ReservationService {
         return new ReservationDTO(entity);
     }
 
+    public ReservationDTO findById(Long id){
+        var reservation = reservationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+id+" not found"));
+
+        return convertToDTO(reservation);
+    }
+
     public Page<ReservationDTO> findAll(Pageable pageable){
         var entityList = reservationRepository.findAll(pageable);
 
