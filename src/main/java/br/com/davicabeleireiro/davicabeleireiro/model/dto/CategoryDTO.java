@@ -3,12 +3,14 @@ package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Category;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Item;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CategoryDTO {
+public class CategoryDTO extends RepresentationModel<CategoryDTO> implements Serializable {
 
     private Long id;
     private String name;

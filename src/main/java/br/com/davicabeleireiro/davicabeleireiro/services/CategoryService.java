@@ -43,6 +43,11 @@ public class CategoryService {
         return new CategoryDTO(entity);
     }
 
+    public CategoryDTO findById(Long id){
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+id+" not found"));
+        return convertToVO(entity);
+    }
+
     public Page<CategoryDTO> findAll(Pageable pageable){
         var categoryList = repository.findAll(pageable);
         return categoryList.map(this::convertToVO);

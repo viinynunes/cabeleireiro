@@ -27,7 +27,9 @@ public class EstablishmentController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public EstablishmentDTO create(@RequestBody EstablishmentDTO dto){
-        return service.create(dto);
+        var entity = service.create(dto);
+        entity.add(linkTo(methodOn(EstablishmentController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")

@@ -3,7 +3,6 @@ package br.com.davicabeleireiro.davicabeleireiro.controller;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.CategoryDTO;
 import br.com.davicabeleireiro.davicabeleireiro.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,6 +11,9 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/category")
@@ -25,18 +27,31 @@ public class CategoryController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public CategoryDTO create(@RequestBody CategoryDTO dto) {
-        return service.create(dto);
+        var entity = service.create(dto);
+        entity.add(linkTo(methodOn(EstablishmentController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
     public CategoryDTO update(@PathVariable("id") Long id, @RequestBody CategoryDTO dto) {
         dto.setId(id);
-        return service.update(dto);
+        var entity = service.update(dto);
+        entity.add(linkTo(methodOn(EstablishmentController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PatchMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
     public CategoryDTO disable(@PathVariable("id") Long id) {
-        return service.disable(id);
+        var entity = service.disable(id);
+        entity.add(linkTo(methodOn(EstablishmentController.class).findById(entity.getId())).withSelfRel());
+        return entity;
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public CategoryDTO findById(@PathVariable("id") Long id){
+        var entity = service.findById(id);
+        entity.add(linkTo(methodOn(CategoryController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(consumes = "application/json")
@@ -48,9 +63,10 @@ public class CategoryController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
 
-        Page<CategoryDTO> categoryPaged = service.findAll(pageable);
+        var entityList = service.findAll(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(EstablishmentController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(categoryPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
 
@@ -66,9 +82,10 @@ public class CategoryController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
 
-        var categoryPaged = service.findByName(name, pageable);
+        var entityList = service.findByName(name, pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(EstablishmentController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(categoryPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
@@ -82,9 +99,9 @@ public class CategoryController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
 
-        var categoryPaged = service.findByEnabledTrue(pageable);
-
-        PagedModel<?> model = assembler.toModel(categoryPaged);
+        var entityList = service.findByEnabledTrue(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(EstablishmentController.class).findById(x.getId())).withSelfRel()));
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
@@ -98,9 +115,9 @@ public class CategoryController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
 
-        var categoryPaged = service.findByEnabledFalse(pageable);
-
-        PagedModel<?> model = assembler.toModel(categoryPaged);
+        var entityList = service.findByEnabledFalse(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(EstablishmentController.class).findById(x.getId())).withSelfRel()));
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
