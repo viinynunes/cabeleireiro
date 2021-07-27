@@ -1,5 +1,6 @@
 package br.com.davicabeleireiro.davicabeleireiro.services;
 
+import br.com.davicabeleireiro.davicabeleireiro.exception.ResourceNotFoundException;
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.EstablishmentDTO;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Establishment;
 import br.com.davicabeleireiro.davicabeleireiro.repository.EstablishmentRepository;
@@ -20,6 +21,11 @@ public class EstablishmentService {
     public EstablishmentDTO create(EstablishmentDTO dto){
         dto.setAddress(api.getAddressFromCEP(dto.getAddress().getCep()));
         return new EstablishmentDTO(repository.save(new Establishment(dto)));
+    }
+
+    public EstablishmentDTO findById(Long id){
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+id+" not found"));
+        return convertToDTO(entity);
     }
 
     public Page<EstablishmentDTO> findAll(Pageable pageable){

@@ -1,5 +1,8 @@
 package br.com.davicabeleireiro.davicabeleireiro.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.EstablishmentDTO;
 import br.com.davicabeleireiro.davicabeleireiro.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,13 @@ public class EstablishmentController {
         return service.create(dto);
     }
 
+    @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public EstablishmentDTO findById(@PathVariable("id") Long id){
+        var entity = service.findById(id);
+        entity.add(linkTo(methodOn(EstablishmentController.class).findById(entity.getId())).withSelfRel());
+        return entity;
+    }
+
     @GetMapping(consumes = "application/json")
     public ResponseEntity<?> findAll(@RequestParam(value = "direction", defaultValue = "desc")String direction,
                                      @RequestParam(value = "page", defaultValue = "0") int page,
@@ -36,9 +46,10 @@ public class EstablishmentController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
 
-        var establishmentPaged = service.findAll(pageable);
+        var entityList = service.findAll(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(EstablishmentController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(establishmentPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
     }

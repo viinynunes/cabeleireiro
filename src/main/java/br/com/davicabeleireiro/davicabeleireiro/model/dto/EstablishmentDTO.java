@@ -4,11 +4,13 @@ import br.com.davicabeleireiro.davicabeleireiro.model.entities.Address;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Contact;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Establishment;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Item;
+import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EstablishmentDTO {
+public class EstablishmentDTO extends RepresentationModel<EstablishmentDTO> implements Serializable {
 
     private Long id;
     private String name;
