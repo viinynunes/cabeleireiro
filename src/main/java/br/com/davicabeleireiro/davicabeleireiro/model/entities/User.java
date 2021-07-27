@@ -1,7 +1,6 @@
 package br.com.davicabeleireiro.davicabeleireiro.model.entities;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.UserDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -38,12 +37,12 @@ public class User implements UserDetails, Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_permission", joinColumns = @JoinColumn(name = "id_user"),
-        inverseJoinColumns = @JoinColumn(name = "id_permission"))
+            inverseJoinColumns = @JoinColumn(name = "id_permission"))
     private List<Permission> permissions;
 
-    public List<String> getRoles(){
+    public List<String> getRoles() {
         List<String> roles = new ArrayList<>();
-        for (Permission permission : permissions){
+        for (Permission permission : permissions) {
             roles.add(permission.getDescription());
         }
         return roles;
@@ -52,7 +51,7 @@ public class User implements UserDetails, Serializable {
     public User() {
     }
 
-    public User(UserDTO dto){
+    public User(UserDTO dto) {
         this.id = dto.getId();
         this.fullName = dto.getFullName();
         this.userName = dto.getUserName();
@@ -84,10 +83,6 @@ public class User implements UserDetails, Serializable {
         this.email = email;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -96,32 +91,16 @@ public class User implements UserDetails, Serializable {
         this.password = password;
     }
 
-    public Boolean getAccountNonExpired() {
-        return accountNonExpired;
-    }
-
     public void setAccountNonExpired(Boolean accountNonExpired) {
         this.accountNonExpired = accountNonExpired;
-    }
-
-    public Boolean getAccountNonLocked() {
-        return accountNonLocked;
     }
 
     public void setAccountNonLocked(Boolean accountNonLocked) {
         this.accountNonLocked = accountNonLocked;
     }
 
-    public Boolean getCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
     public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
         this.credentialsNonExpired = credentialsNonExpired;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
     }
 
     public void setEnabled(Boolean enabled) {

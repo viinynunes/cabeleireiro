@@ -9,6 +9,8 @@ import br.com.davicabeleireiro.davicabeleireiro.repository.PermissionRepository;
 import br.com.davicabeleireiro.davicabeleireiro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,15 +42,15 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userRepository.findByUserName(username);
 
-        if (user != null){
+        if (user != null) {
             return user;
-        }else {
+        } else {
             throw new UsernameNotFoundException("username " + username + " not found");
         }
     }
 
-    public UserDTO create(UserDTO dto){
-        if (userRepository.findByUserName(dto.getUserName()) != null){
+    public UserDTO create(UserDTO dto) {
+        if (userRepository.findByUserName(dto.getUserName()) != null) {
             throw new ResourceAlreadyExists("Username " + dto.getUserName() + " already exists");
         }
 
@@ -67,8 +69,8 @@ public class UserService implements UserDetailsService {
         return new UserDTO(userRepository.save(user));
     }
 
-    public UserDTO update(UserDTO dto){
-        var entity = userRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException("ID "+ dto.getId()+" not found"));
+    public UserDTO update(UserDTO dto) {
+        var entity = userRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException("ID " + dto.getId() + " not found"));
 
         entity.setFullName(dto.getFullName());
         entity.setUserName(dto.getUserName());
@@ -80,68 +82,62 @@ public class UserService implements UserDetailsService {
 
         entity.setPermissions(getPermissionList(dto));
 
-        if (userRepository.findByUserName(dto.getUserName()) != null){
-            if (userRepository.verifyUsernameWithIdAlreadyExists(dto.getUserName(), dto.getId()) == null){
+        if (userRepository.findByUserName(dto.getUserName()) != null) {
+            if (userRepository.verifyUsernameWithIdAlreadyExists(dto.getUserName(), dto.getId()) == null) {
                 throw new ResourceAlreadyExists("The username " + dto.getUserName() + " is already used");
             }
         }
 
-        if (userRepository.verifyEmailAlreadyExists(dto.getEmail()) != null){
-            if (userRepository.verifyEmailWithIDAlreadyExists(dto.getEmail(), dto.getId()) != null){
+        if (userRepository.verifyEmailAlreadyExists(dto.getEmail()) != null) {
+            if (userRepository.verifyEmailWithIDAlreadyExists(dto.getEmail(), dto.getId()) != null) {
                 return new UserDTO(userRepository.save(entity));
-            }else {
+            } else {
                 throw new ResourceAlreadyExists("The email " + dto.getEmail() + " is already used");
             }
-        }else {
+        } else {
             return new UserDTO(userRepository.save(entity));
         }
     }
 
     @Transactional
-    public UserDTO disable(Long id){
+    public UserDTO disable(Long id) {
         userRepository.disable(id);
 
-        var entity = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+ id +" not found"));
+        var entity = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID " + id + " not found"));
 
         return new UserDTO(entity);
     }
 
-    public UserDTO findById(Long id){
-        var entity = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+ id +" not found"));
+    public UserDTO findById(Long id) {
+        var entity = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID " + id + " not found"));
         return new UserDTO(entity);
     }
 
-    public List<UserDTO> findAll(){
-        var entityList = userRepository.findAll();
+    public Page<UserDTO> findAll(Pageable pageable) {
+        var entityList = userRepository.findAll(pageable);
 
-        List<UserDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new UserDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<UserDTO> findByEnabledTrue(){
-        var entityList = userRepository.findByEnabledTrue();
+    public Page<UserDTO> findByEnabledTrue(Pageable pageable) {
+        var entityList = userRepository.findByEnabledTrue(pageable);
 
-        List<UserDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new UserDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    public List<UserDTO> findByEnabledFalse(){
-        var entityList = userRepository.findByEnabledFalse();
+    public Page<UserDTO> findByEnabledFalse(Pageable pageable) {
+        var entityList = userRepository.findByEnabledFalse(pageable);
 
-        List<UserDTO> dtoList = new ArrayList<>();
-        entityList.forEach(x -> dtoList.add(new UserDTO(x)));
-        return dtoList;
+        return entityList.map(this::convertToDTO);
     }
 
-    private List<Permission> getPermissionList(UserDTO dto){
+    private List<Permission> getPermissionList(UserDTO dto) {
         List<Permission> permissionList = new ArrayList<>();
-        for (String role : dto.getRoles()){
+        for (String role : dto.getRoles()) {
             var permission = permissionRepository.findByDescription(role.toUpperCase());
-            if (permission != null){
+            if (permission != null) {
                 permissionList.add(permission);
-            }else {
+            } else {
                 throw new ResourceNotFoundException("Permission " + role + " not found");
             }
         }
@@ -149,9 +145,13 @@ public class UserService implements UserDetailsService {
         return permissionList;
     }
 
-    private void verifyEmailAlreadyExists(String email){
-        if (userRepository.verifyEmailAlreadyExists(email) != null){
+    private void verifyEmailAlreadyExists(String email) {
+        if (userRepository.verifyEmailAlreadyExists(email) != null) {
             throw new ResourceAlreadyExists("Email " + email + " already exists");
         }
+    }
+
+    private UserDTO convertToDTO(User user) {
+        return new UserDTO(user);
     }
 }
