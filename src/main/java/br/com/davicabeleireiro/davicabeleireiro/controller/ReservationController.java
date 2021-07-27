@@ -1,5 +1,8 @@
 package br.com.davicabeleireiro.davicabeleireiro.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ReservationDTO;
 import br.com.davicabeleireiro.davicabeleireiro.services.ReservationService;
 import br.com.davicabeleireiro.davicabeleireiro.utils.ControllerUtils;
@@ -25,20 +28,25 @@ public class ReservationController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ReservationDTO create(@RequestBody ReservationDTO dto) {
-        return service.create(dto);
+        var entity = service.create(dto);
+        entity.add(linkTo(methodOn(ReservationController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
     public ReservationDTO update(@PathVariable("id") Long id,
                                  @RequestBody ReservationDTO dto) {
         dto.setId(id);
-        return service.update(dto);
+        var entity = service.update(dto);
+        entity.add(linkTo(methodOn(ReservationController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
     public ReservationDTO findById(@PathVariable("id") Long id){
-        return service.findById(id);
-
+        var entity = service.findById(id);
+        entity.add(linkTo(methodOn(ReservationController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 
     @GetMapping(consumes = "application/json")
@@ -49,9 +57,10 @@ public class ReservationController {
         var sortDirection = ControllerUtils.getSortDirection(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "scheduleDate"));
 
-        var entityPaged = service.findAll(pageable);
+        var entityList = service.findAll(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(ReservationController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(entityPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
@@ -63,9 +72,10 @@ public class ReservationController {
         var sortDirection = ControllerUtils.getSortDirection(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "scheduleDate"));
 
-        var entityPaged = service.findByEnabledTrue(pageable);
+        var entityList = service.findByEnabledTrue(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(ReservationController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(entityPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
@@ -77,9 +87,10 @@ public class ReservationController {
         var sortDirection = ControllerUtils.getSortDirection(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "scheduleDate"));
 
-        var entityPaged = service.findByEnabledFalse(pageable);
+        var entityList = service.findByEnabledFalse(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(ReservationController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(entityPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
@@ -91,9 +102,10 @@ public class ReservationController {
         var sortDirection = ControllerUtils.getSortDirection(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "scheduleDate"));
 
-        var entityPaged = service.findByUser(username, pageable);
+        var entityList = service.findByUser(username, pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(ReservationController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(entityPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
@@ -105,14 +117,17 @@ public class ReservationController {
         var sortDirection = ControllerUtils.getSortDirection(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "scheduleDate"));
 
-        var entityPaged = service.findByUserId(id, pageable);
+        var entityList = service.findByUserId(id, pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(ReservationController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(entityPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
     @PatchMapping(value = "/{id}", produces = "application/json")
     public ReservationDTO disableReservation(@PathVariable("id") Long id) {
-        return service.disableReservation(id);
+        var entity = service.disableReservation(id);
+        entity.add(linkTo(methodOn(ReservationController.class).findById(entity.getId())).withSelfRel());
+        return entity;
     }
 }
