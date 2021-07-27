@@ -1,5 +1,8 @@
 package br.com.davicabeleireiro.davicabeleireiro.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import br.com.davicabeleireiro.davicabeleireiro.model.dto.ItemDTO;
 import br.com.davicabeleireiro.davicabeleireiro.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,16 @@ public class ItemController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ItemDTO create(@RequestBody ItemDTO dto){
-        return service.create(dto);
+        var entity = service.create(dto);
+        entity.add(linkTo(methodOn(ItemController.class).findById(entity.getId())).withSelfRel());
+        return entity;
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public ItemDTO findById(@PathVariable("id") Long id){
+        var entity = service.findById(id);
+        entity.add(linkTo(methodOn(ItemController.class).findById(id)).withSelfRel());
+        return entity;
     }
 
     @GetMapping(produces = "application/json" ,consumes = "application/json")
@@ -36,9 +48,10 @@ public class ItemController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
 
-        var itemPaged = service.findAll(pageable);
+        var entityList = service.findAll(pageable);
+        entityList.forEach(x -> x.add(linkTo(methodOn(ItemController.class).findById(x.getId())).withSelfRel()));
 
-        PagedModel<?> model = assembler.toModel(itemPaged);
+        PagedModel<?> model = assembler.toModel(entityList);
 
         return new ResponseEntity<>(model, HttpStatus.OK);
     }

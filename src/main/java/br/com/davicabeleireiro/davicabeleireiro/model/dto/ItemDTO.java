@@ -2,10 +2,11 @@ package br.com.davicabeleireiro.davicabeleireiro.model.dto;
 
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Category;
 import br.com.davicabeleireiro.davicabeleireiro.model.entities.Item;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 
-public class ItemDTO implements Serializable {
+public class ItemDTO extends RepresentationModel<ItemDTO> implements Serializable {
 
     private Long id;
     private String name;

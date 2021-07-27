@@ -25,6 +25,11 @@ public class ItemService {
         return new ItemDTO(repository.save(new Item(dto)));
     }
 
+    public ItemDTO findById(Long id){
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ID "+id+"not found"));
+        return convertToDTO(entity);
+    }
+
     public Page<ItemDTO> findAll(Pageable pageable){
         var entityList = repository.findAll(pageable);
         return entityList.map(this::convertToDTO);
