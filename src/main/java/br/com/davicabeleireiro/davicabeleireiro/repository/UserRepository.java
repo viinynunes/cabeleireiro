@@ -12,6 +12,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUserName(String userName);
 
+    @Query("SELECT fullName FROM User u WHERE LOWER(u.userName) = :username")
+    String findFullNameByUserName(String username);
+
     @Query("SELECT u FROM User u WHERE LOWER(u.userName) = :username AND u.id = :id")
     User verifyUsernameWithIdAlreadyExists(@Param("username") String username, @Param("id") Long id);
 

@@ -113,6 +113,16 @@ public class UserService implements UserDetailsService {
         return new UserDTO(entity);
     }
 
+    public String findFullNameByUserName(String username){
+        var fullName = userRepository.findFullNameByUserName(username);
+
+        if (fullName == null){
+            throw new ResourceNotFoundException("username " + username + "not found");
+        }else {
+            return fullName;
+        }
+    }
+
     public Page<UserDTO> findAll(Pageable pageable) {
         var entityList = userRepository.findAll(pageable);
 

@@ -57,6 +57,11 @@ public class UserController {
         return entity;
     }
 
+    @GetMapping(value = "/findFullName/{username}", produces = "application/json", consumes = "application/json")
+    public String findFullNameByUserName(@PathVariable("username") String username){
+        return userService.findFullNameByUserName(username);
+    }
+
     @GetMapping(value = "/findByEnabledTrue", consumes = "application/json")
     public ResponseEntity<?> findByEnabledTrue(@RequestParam(value = "direction", defaultValue = "desc") String direction,
                                                @RequestParam(value = "page", defaultValue = "0") int page,
